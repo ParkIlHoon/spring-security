@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,10 +16,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 @Slf4j
 @Configuration
@@ -61,13 +66,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .usernameParameter("userId")            // username 파라미터명
             .passwordParameter("passwd")            // password 파라미터명
             .loginProcessingUrl("/login_proc")      // 로그인 처리 URL
-//            .successHandler(new AuthenticationSuccessHandler() {
-//                @Override
-//                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//                    log.info("authentication : " + authentication.getName());
-//                    response.sendRedirect("/");
-//                }
-//            })
+            .successHandler(new AuthenticationSuccessHandler() {
+                @Override
+                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                    HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+                    SavedRequest savedRequest = requestCache.getRequest(request, response);
+
+                    log.info("authentication : " + authentication.getName());
+                    response.sendRedirect(savedRequest.getRedirectUrl());
+                }
+            })
 //            .failureHandler(new AuthenticationFailureHandler() {
 //                @Override
 //                public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
@@ -113,5 +121,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionFixation()
                 .changeSessionId()
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
+
+            http
+                .exceptionHandling()
+                // 인증 예외
+                .authenticationEntryPoint(new AuthenticationEntryPoint() {
+                    @Override
+                    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                        response.sendRedirect("/login");
+                    }
+                })
+                // 인가 예외
+                .accessDeniedHandler(new AccessDeniedHandler() {
+                    @Override
+                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                        response.sendRedirect("/denied");
+                    }
+                });
     }
 }
