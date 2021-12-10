@@ -4,22 +4,9 @@
 <div th:replace="layout/top::header"></div>
 
 <body>
-	<script type="text/javascript">
-
-      function goMod() {
-        document.listFrm.action = "/admin/accounts";
-        document.listFrm.submit();
-      }
-
-	$(document).ready(function(){
-		
-	});
-	
-	</script>
-
     <div class="container">
       <div class="tbl_wrp">
-        <form class="form-horizontal" th:action="@{/admin/accounts}" method="post">
+        <form class="form-horizontal" th:action="@{/accounts}" method="post">
           <div class="form-group">
             <label for="username" class="col-sm-2 control-label">아이디</label>
             <div class="col-sm-10">
