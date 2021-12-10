@@ -51,7 +51,7 @@ public class Account {
             .password(password)
             .email(email)
             .age(age)
-            .role("USER")
+            .role("ROLE_USER")
             .build();
     }
 }
