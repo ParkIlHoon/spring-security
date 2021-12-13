@@ -23,6 +23,10 @@
 						Login
 					</span>
 
+					<div th:if="${param.error}" class="text-center w-full m-b-15">
+						<span class="txt1 alert-validate" th:text="${message}"></span>
+					</div>
+
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Valid email is required: ex@abc.xyz">
 						<input class="input100" type="text" name="username" placeholder="username">
 						<span class="focus-input100"></span>
