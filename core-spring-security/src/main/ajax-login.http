@@ -1,0 +1,10 @@
+POST http://localhost:8080/api/login
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+
+{
+  "username" : "test",
+  "password" : "1234"
+}
+
+###
