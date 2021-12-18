@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.controller.repository;
+package io.security.corespringsecurity.repository;
 
 import io.security.corespringsecurity.domain.Account;
 import java.util.Optional;

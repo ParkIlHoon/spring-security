@@ -1,6 +1,8 @@
 package io.security.corespringsecurity.security.config;
 
+import io.security.corespringsecurity.security.entrypoint.AjaxLoginAuthenticationEntryPoint;
 import io.security.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
+import io.security.corespringsecurity.security.handler.AjaxAccessDeniedHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
@@ -26,6 +28,8 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final AjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandler;
     private final AjaxAuthenticationFailureHandler ajaxAuthenticationFailureHandler;
+    private final AjaxLoginAuthenticationEntryPoint ajaxLoginAuthenticationEntryPoint;
+    private final AjaxAccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -38,10 +42,16 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .antMatcher("/api/**")
             .authorizeRequests()
+            .antMatchers("/api/messages").hasRole("MANAGER")
             .anyRequest().authenticated();
 
         http
             .addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http
+            .exceptionHandling()
+                .authenticationEntryPoint(ajaxLoginAuthenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
 
         http.csrf().disable();
     }
