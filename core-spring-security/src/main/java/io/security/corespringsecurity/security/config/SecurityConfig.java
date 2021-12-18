@@ -21,10 +21,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+@Order(1)
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -46,10 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable();
-
+   protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
             .antMatchers("/").permitAll()

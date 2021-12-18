@@ -2,7 +2,7 @@ package io.security.corespringsecurity.service;
 
 import io.security.corespringsecurity.domain.Account;
 import io.security.corespringsecurity.dto.AccountCreateDto;
-import io.security.corespringsecurity.repository.AccountRepository;
+import io.security.corespringsecurity.controller.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

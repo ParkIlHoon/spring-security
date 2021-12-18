@@ -1,7 +1,7 @@
 package io.security.corespringsecurity.security.service;
 
 import io.security.corespringsecurity.domain.Account;
-import io.security.corespringsecurity.repository.AccountRepository;
+import io.security.corespringsecurity.controller.repository.AccountRepository;
 import io.security.corespringsecurity.security.context.AccountContext;
 import java.util.ArrayList;
 import java.util.List;
