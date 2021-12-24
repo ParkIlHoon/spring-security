@@ -16,7 +16,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.RoleHierarchyVoter;
 import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -125,7 +127,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
-        return List.of(new RoleVoter());
+        return List.of(new RoleVoter(), new RoleHierarchyVoter(roleHierarchyImpl()));
+    }
+
+    @Bean
+    public RoleHierarchyImpl roleHierarchyImpl() {
+        return new RoleHierarchyImpl();
     }
 
     @Bean
