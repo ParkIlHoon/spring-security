@@ -7,6 +7,7 @@ import io.security.corespringsecurity.security.handler.CustomAuthenticationFailu
 import io.security.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.metadatasource.UrlFilterInvocationSecurityMetaDataSource;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
+import io.security.corespringsecurity.security.voter.IpAccessVoter;
 import io.security.corespringsecurity.service.ResourcesService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     private final UrlFilterInvocationSecurityMetaDataSource urlFilterInvocationSecurityMetaDataSource;
+    private final IpAccessVoter ipAccessVoter;
 
     private String[] permitAllResources = {"/", "/login", "/account/login/**"};
 
@@ -123,11 +125,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AccessDecisionManager affirmativeBased() {
-        return new AffirmativeBased(getAccessDecisionVoters());
+        AffirmativeBased affirmativeBased = new AffirmativeBased(getAccessDecisionVoters());
+        affirmativeBased.setAllowIfAllAbstainDecisions(false);
+        return affirmativeBased;
     }
 
     private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
-        return List.of(new RoleVoter(), new RoleHierarchyVoter(roleHierarchyImpl()));
+        return List.of(ipAccessVoter, new RoleVoter(), new RoleHierarchyVoter(roleHierarchyImpl()));
     }
 
     @Bean
